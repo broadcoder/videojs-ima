@@ -122,6 +122,9 @@ const SdkImpl = function(controller) {
   if (this.controller.getSettings().autoPlayAdBreaks === false) {
     this.autoPlayAdBreaks = false;
   }
+  if (this.controller.getContentIsLive() === true) {
+    this.autoPlayAdBreaks = false;
+  }
 
   // Set SDK settings from plugin settings.
   if (this.controller.getSettings().locale) {
@@ -216,7 +219,11 @@ SdkImpl.prototype.requestAds = function() {
   adsRequest.nonLinearAdSlotHeight =
       this.controller.getSettings().nonLinearHeight ||
       this.controller.getPlayerHeight();
-  adsRequest.setAdWillAutoPlay(this.controller.adsWillAutoplay());
+
+  const isLive = this.controller.getContentIsLive();
+  const autoPlay = this.controller.adsWillAutoplay();
+  // Prevent auto play on active contentIsLive option
+  adsRequest.setAdWillAutoPlay(autoPlay && isLive);
   adsRequest.setAdWillPlayMuted(this.controller.adsWillPlayMuted());
 
   // Populate the adsRequestproperties with those provided in the AdsRequest
@@ -396,6 +403,14 @@ SdkImpl.prototype.onAdBreakReady = function(adEvent) {
  * @param {google.ima.AdEvent} adEvent The AdEvent thrown by the AdsManager.
  */
 SdkImpl.prototype.onContentPauseRequested = function(adEvent) {
+  // if there is an ad playing already,
+  // we can't start the ad break to not
+  // call startLinearAdMode again
+  if (this.controller.getIsPlayingAd()) {
+    const warn = 'An Ad was skipped since another ad is playing already';
+    window.console.info(warn);
+    return;
+  }
   this.adsActive = true;
   this.adPlaying = true;
   this.controller.onAdBreakStart(adEvent);

@@ -69,6 +69,7 @@ const Controller = function(player, options) {
     debug: this.settings.debug,
     timeout: this.settings.timeout,
     prerollTimeout: this.settings.prerollTimeout,
+    contentIsLive: this.settings.contentIsLive,
   };
   const adsPluginSettings = this.extend(
       {}, contribAdsDefaults, options.contribAdsSettings || {});
@@ -87,6 +88,7 @@ Controller.IMA_DEFAULTS = {
   adLabelNofN: 'of',
   showControlsForJSAds: true,
   requestMode: 'onLoad',
+  contentIsLive: false,
 };
 
 /**
@@ -154,6 +156,13 @@ Controller.prototype.getIsIos = function() {
   return this.isIos;
 };
 
+Controller.prototype.getContentIsLive = function() {
+  return this.settings.contentIsLive;
+};
+
+Controller.prototype.getIsPlayingAd = function() {
+  return this.playerWrapper.isPlayingAd();
+};
 
 /**
  * Inject the ad container div into the DOM.
@@ -741,7 +750,7 @@ Controller.prototype.adsWillAutoplay = function() {
 
 
 /**
- * @return {boolean} true if we expect that ads will autoplay. false otherwise.
+ * @return {boolean} true if we expect that ads play muted. false otherwise.
  */
 Controller.prototype.adsWillPlayMuted = function() {
   if (this.settings.adsWillPlayMuted !== undefined) {

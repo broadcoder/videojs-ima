@@ -491,7 +491,9 @@ PlayerWrapper.prototype.onAdBreakStart = function() {
   this.vjsPlayer.off('contentended', this.boundContentEndedListener);
   this.vjsPlayer.ads.startLinearAdMode();
   this.vjsControls.hide();
-  this.vjsPlayer.pause();
+  if (!this.controller.getContentIsLive()) {
+    this.vjsPlayer.pause();
+  }
 };
 
 
@@ -504,6 +506,10 @@ PlayerWrapper.prototype.onAdBreakEnd = function() {
     this.vjsPlayer.ads.endLinearAdMode();
   }
   this.vjsControls.show();
+};
+
+PlayerWrapper.prototype.isPlayingAd = function()  {
+  return this.vjsPlayer.ads._inLinearAdMode;
 };
 
 
