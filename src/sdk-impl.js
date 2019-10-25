@@ -223,7 +223,7 @@ SdkImpl.prototype.requestAds = function() {
   const isLive = this.controller.getContentIsLive();
   const autoPlay = this.controller.adsWillAutoplay();
   // Prevent auto play on active contentIsLive option
-  adsRequest.setAdWillAutoPlay(autoPlay && isLive);
+  adsRequest.setAdWillAutoPlay(autoPlay && !isLive);
   adsRequest.setAdWillPlayMuted(this.controller.adsWillPlayMuted());
 
   // Populate the adsRequestproperties with those provided in the AdsRequest
