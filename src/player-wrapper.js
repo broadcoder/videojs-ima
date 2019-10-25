@@ -504,6 +504,9 @@ PlayerWrapper.prototype.onAdBreakEnd = function() {
   this.vjsPlayer.on('contentended', this.boundContentEndedListener);
   if (this.vjsPlayer.ads.inAdBreak()) {
     this.vjsPlayer.ads.endLinearAdMode();
+    if (this.controller.getContentIsLive()) {
+      this.vjsPlayer.trigger('contentresumed');
+    }
   }
   this.vjsControls.show();
 };
