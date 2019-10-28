@@ -198,6 +198,12 @@ SdkImpl.prototype.initAdObjects = function() {
  */
 SdkImpl.prototype.requestAds = function() {
   const adsRequest = new google.ima.AdsRequest();
+  adsRequest.setContinuousPlayback(this.controller.getSettings().contentIsLive);
+  if (this.controller.getSettings().liveStreamPrefetchSeconds) {
+    adsRequest.liveStreamPrefetchSeconds =
+        this.controller.getSettings().liveStreamPrefetchSeconds;
+  }
+
   if (this.controller.getSettings().adTagUrl) {
     adsRequest.adTagUrl = this.controller.getSettings().adTagUrl;
   } else {
@@ -438,6 +444,9 @@ SdkImpl.prototype.onContentResumeRequested = function(adEvent) {
 SdkImpl.prototype.onAllAdsCompleted = function(adEvent) {
   this.allAdsCompleted = true;
   this.controller.onAllAdsCompleted();
+  if (this.controller.getSettings().contentIsLive) {
+    this.requestAds();
+  }
 };
 
 
